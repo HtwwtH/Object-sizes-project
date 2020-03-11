@@ -9,7 +9,7 @@ import cv2
 import datetime
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow
-from BullionClass import Bullion, CounturClass
+from bullionClass import Bullion, CounturClass
 
 
 def Show(img1):
@@ -289,7 +289,7 @@ class Ui_MainWindow(QMainWindow, object):
         widths, lengths = self.bullion.measureExplore()
         self.Average.append('{} x {}'.format(self.bullion.lens, self.bullion.widths))
         self.Report.append('MEASURING LENGTHS: {}'.format(datetime.datetime.now()))
-        for id, item in enumerate(lengths):
+        for id, item in enumerate(lengths):                             # результаты каждого измерения выведем в лог
             len_summary += item
             self.Report.append('Measure {}: {}mm'.format(id+1, item))
         self.Report.append('\nMEASURING WIDTHS: {}'.format(datetime.datetime.now()))
@@ -298,9 +298,9 @@ class Ui_MainWindow(QMainWindow, object):
             self.Report.append('Measure {}: {}mm'.format(id+1, item))
         self.Report.append('\n')
 
-        wid_average = wid_summary/len(widths)
-        len_average = len_summary/len(lengths)
-        self.Average.append('Average of lengths is: {}mm'.format(len_average))
+        wid_average = wid_summary/len(widths)                       # считаем среднее ширины
+        len_average = len_summary/len(lengths)                      # считаем среднее длины
+        self.Average.append('Average of lengths is: {}mm'.format(len_average))          # пишем среднее в окно result
         self.Average.append('Average of widths is: {}mm\n'.format(wid_average))
 
         height, width, channel = self.bullion.img_processed.shape

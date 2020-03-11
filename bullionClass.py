@@ -49,6 +49,7 @@ class Bullion():
         cv2.drawContours(img, self.counturClass.countur, -1, (145, 255, 145), 2)
         self.img_processed = img
 
+    # померить размеры по данным о прямоугольнике
     def measureJustEdges(self, img):
         (tl, tr, br, bl) = self.counturClass.box
         _Wtop = round(dist.euclidean(tl, tr)*self.k,1)
@@ -57,6 +58,10 @@ class Bullion():
         cv2.putText(img, str(_Wtop), (tl[0], tl[1]), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
         cv2.putText(img, str(_Hright), (tr[0], int(tr[1] + 35)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255),2)
         return img
+
+
+    # getBoxData - найти контур и угловые точки прямоугольника, и занести в память класс
+    # в переменные self.counturClass.countur и self.counturClass.box
 
     def getBoxData(self):
         img = self.img_processed.copy()
@@ -102,11 +107,13 @@ class Bullion():
         self.img_processed = self.img
         self.counturClass = CounturClass()
 
+
+
     def lines(self, command):
         self.getBoxData()
-        (tl, tr, br, bl) = self.counturClass.box
+        (tl, tr, br, bl) = self.counturClass.box            # обозначаем точки - углы прямоугольника новыми переменными (tl - topleft, tr - top right...)
 
-        if dist.euclidean(tl,bl)>dist.euclidean(tl,tr):
+        if dist.euclidean(tl,bl)>=dist.euclidean(tl,tr):     #сравниваем длины, чтоб понять, где длина, где ширина (их по 2: верх-низ, лево-право)
             len1 = (tl, bl)
             len2 = (tr, br)
             wid1 = (tl, tr)
@@ -125,9 +132,13 @@ class Bullion():
         else:
             self.contourPoints()
 
+
+    # fillPoints - разбить линию на заданное количество отрезков
+    # координаты точек храним в соответствующих массивах: "длина1", "длина2", "ширина1", "ширина2"
+
     def fillPoints(self, command, edge1, edge2, measures):
         step = int(dist.euclidean(edge1[0], edge1[1]) / (measures + 1))
-        for i in range(measures):
+        for i in range(measures):                                   # находим точки на прямоугольнике с двух противоположных сторон
             x0, y0 = Operations.PointsPosition(i, edge1, step)
             if command is 'len':
                 self.counturClass.len1_points.append((x0, y0))
@@ -140,7 +151,8 @@ class Bullion():
             else:
                 self.counturClass.wid2_points.append((x1, y1))
 
-            ind1, ind2 = Operations.GetIndexes(self.counturClass, x0, x1, y0, y1)
+            ind1, ind2 = Operations.GetIndexes(self.counturClass, x0, x1, y0, y1)       # находим индексы точек, ближайших к точкам прямоугольника, НО ПРИНАДЛЕЖАЩИХ КОНТУРУ
+                                                                                        # сохраняем эти точки в отдельные массивы
 
             if command is 'len':
                 self.counturClass.len_c_points.append(
@@ -151,6 +163,8 @@ class Bullion():
                     [(self.counturClass.countur[ind1][0][0], self.counturClass.countur[ind1][0][1]),
                      (self.counturClass.countur[ind2][0][0], self.counturClass.countur[ind2][0][1])])
 
+
+    #     rectPoints - нарисовать на изображении ТОЧКИ прямоугольника - результат того, что разбивали на отрезки
     def rectPoints(self):
         img = self.img_processed.copy()
         for point in self.counturClass.len1_points:
@@ -172,6 +186,7 @@ class Bullion():
         self.img_processed = img
 
 
+    # contourPoints - нарисовать на изображении ТОЧКИ контура - результат того, что разбивали на отрезки
     def contourPoints(self):
         img = self.img_processed.copy()
         for item in self.counturClass.len_c_points:
@@ -184,7 +199,7 @@ class Bullion():
 
         self.img_processed = img
 
-
+    # measureExplore - вернуть результаты измерения среди точек, лежащих на контуре
     def measureExplore(self):
         widths = []
         for pair in self.counturClass.len_c_points:
@@ -198,6 +213,8 @@ class Bullion():
 
         return widths, lengths
 
+
+    # drawLines - между найденными точками нарисовать линии (для наглядности)
     def drawLines(self):
         img = self.img_processed.copy()
         for pair in self.counturClass.len_c_points:
