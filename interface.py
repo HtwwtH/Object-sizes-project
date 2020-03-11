@@ -28,7 +28,7 @@ class Ui_MainWindow(QMainWindow, object):
         self.image = QtWidgets.QLabel(self.centralwidget)
         self.image.setGeometry(QtCore.QRect(9, 9, 1139, 665))
         self.image.setText("")
-        first_image_name = "images/hayam.jpg"
+        first_image_name = "hayam.jpg"
         self.image.setPixmap(QtGui.QPixmap(first_image_name))
         self.image.setScaledContents(True)
         self.image.setObjectName("image")
