@@ -3,4 +3,6 @@
 
 Интерфейс PyQt5 UI code generator
 
+На картинке: зеленая обводка - контур, синяя обводка - прямоугольник, белые надписи на картинке - измерения по прямоугольнику, измерения снизу справа в окне "Result" - размеры, вычисленные по контуру
+
 ![Пример работы](https://github.com/HtwwtH/Object-sizes-project/blob/master/demonstration/pWAkLFoYmpM.jpg)
